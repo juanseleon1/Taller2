@@ -47,6 +47,7 @@ public class ContactsActivity extends AppCompatActivity {
                 Toast.makeText(context, just, Toast.LENGTH_LONG).show();
             }
             ActivityCompat.requestPermissions(context, new String[]{permission}, id);
+
         }
     }
 

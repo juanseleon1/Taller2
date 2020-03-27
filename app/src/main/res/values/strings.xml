@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Taller2</string>
     <string name="title_activity_maps">Mapa</string>
+    <string name="selecImg">Seleccionar</string>
+    <string name="tomarImg">Camara</string>
+    <string name="adhint">Direccion</string>
 </resources>
