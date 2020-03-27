@@ -66,7 +66,7 @@ public class CamaraActivity extends AppCompatActivity {
     {
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-            permisos.requestPermission(this, Manifest.permission.CAMERA, null, permisos.PERMISSION_STORAGE_ID.ordinal());
+            permisos.requestPermission(this, Manifest.permission.CAMERA, null, permisos.PERMISSION_CAMERA_ID.ordinal());
         }
         else {
             Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -87,13 +87,13 @@ public class CamaraActivity extends AppCompatActivity {
 
             case CAMARA:
                 if(!aprob)
-                    Toast.makeText(this,"Camara Desactivada",Toast.LENGTH_LONG);
+                    Toast.makeText(this,"Camara Desactivada",Toast.LENGTH_LONG).show();
                 else
                     camara();
                 break;
             case SELEC:
                 if(!aprob)
-                    Toast.makeText(this,"Seleccion Desactivada",Toast.LENGTH_LONG);
+                    Toast.makeText(this,"Seleccion Desactivada",Toast.LENGTH_LONG).show();
                 else
                 selecPic();
                 break;
