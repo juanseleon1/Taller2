@@ -39,8 +39,8 @@ public class ImageActivity extends AppCompatActivity {
         imagen = findViewById(R.id.image);
         seleccion = findViewById(R.id.seleccion);
 
-        requestPermission(this, Manifest.permission.CAMERA, "Es necesario para acceder a la camara", permisos.PERMISSION_CAMERA.ordinal() );
-        requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, "Es necesario para acceder a imagenes", permisos.PERMISSION_READ_EXTERNAL_STORAGE.ordinal() );
+        requestPermission(this, Manifest.permission.CAMERA, "Es necesario para acceder a la camara", permisos.PERMISSION_CAMERA_ID.ordinal() );
+        requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, "Es necesario para acceder a imagenes", permisos.PERMISSION_STORAGE_ID.ordinal() );
 
         camara.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,11 +74,13 @@ public class ImageActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
-        if(permisos.PERMISSION_CAMERA.ordinal() == requestCode){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == permisos.PERMISSION_CAMERA_ID.ordinal())
+        {
             takePicture();
         }
-
-        if(permisos.PERMISSION_READ_EXTERNAL_STORAGE.ordinal() == requestCode){
+        if (requestCode == permisos.PERMISSION_STORAGE_ID.ordinal())
+        {
             chooseImage();
         }
     }
@@ -100,7 +102,8 @@ public class ImageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case IMAGE_PICKER_REQUEST:
-                if(resultCode == RESULT_OK){
+                {
+                if (resultCode == RESULT_OK) {
                     try {
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
@@ -110,7 +113,8 @@ public class ImageActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
+            }
+            break;
             case REQUEST_IMAGE_CAPTURE:
             {
                 if(resultCode == RESULT_OK){
@@ -119,6 +123,7 @@ public class ImageActivity extends AppCompatActivity {
                     imagen.setImageBitmap(imageBitmap);
                 }
             }
+            break;
         }
     }
 }
