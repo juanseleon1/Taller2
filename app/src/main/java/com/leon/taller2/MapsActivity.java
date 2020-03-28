@@ -186,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void toastPosicion(LatLng latLng) throws IOException {
         List<Address> lista=geo.getFromLocation(latLng.latitude,latLng.longitude,1);
         Toast.makeText(getBaseContext(),
-                "La distancia entre su ubicacion y "+lista.get(0).getAddressLine(0)+" es:"+distance(latLng.latitude,latLng.longitude,current.getLatitude(),current.getLongitude()),
+                "La distancia entre su ubicacion y "+lista.get(0).getAddressLine(0)+" es:"+distance(latLng.latitude,latLng.longitude,current.getLatitude(),current.getLongitude()) + " km",
                 Toast.LENGTH_SHORT).show();
     }
 
