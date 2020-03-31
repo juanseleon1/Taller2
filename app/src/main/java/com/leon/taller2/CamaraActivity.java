@@ -24,7 +24,6 @@ public class CamaraActivity extends AppCompatActivity {
 
     Button selec,tomar;
     ImageView img;
-    final static int SELEC=1, CAMARA=2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +34,7 @@ public class CamaraActivity extends AppCompatActivity {
         selec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i= new Intent(Intent.ACTION_PICK);
-                i.setType("image/*");
-                startActivityForResult(i,SELEC);
+                selecPic();
             }
         });
 
@@ -52,13 +49,13 @@ public class CamaraActivity extends AppCompatActivity {
     private void selecPic()
     {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
-            permisos.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, null, permisos.PERMISSION_STORAGE_ID.ordinal());
+            permisos.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, "Es necesario para seleccionar su imagen", permisos.PERMISSION_STORAGE_ID.ordinal());
         }
         else
         {
             Intent i= new Intent(Intent.ACTION_PICK);
             i.setType("image/*");
-            startActivityForResult(i,SELEC);
+            startActivityForResult(i,permisos.PERMISSION_STORAGE_ID.ordinal());
         }
 
     }
@@ -66,12 +63,12 @@ public class CamaraActivity extends AppCompatActivity {
     {
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-            permisos.requestPermission(this, Manifest.permission.CAMERA, null, permisos.PERMISSION_CAMERA_ID.ordinal());
+            permisos.requestPermission(this, Manifest.permission.CAMERA, "Es necesario para poder tomar la imagen a mostrar", permisos.PERMISSION_CAMERA_ID.ordinal());
         }
         else {
             Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (i.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(i, CAMARA);
+                startActivityForResult(i, permisos.PERMISSION_CAMERA_ID.ordinal());
             }
         }
     }
@@ -83,39 +80,37 @@ public class CamaraActivity extends AppCompatActivity {
         if(grantResults.length>0){
             aprob=grantResults[0]==PackageManager.PERMISSION_GRANTED;
         }
-        switch (requestCode) {
 
-            case CAMARA:
+            if(requestCode==permisos.PERMISSION_CAMERA_ID.ordinal())
                 if(!aprob)
                     Toast.makeText(this,"Camara Desactivada",Toast.LENGTH_LONG).show();
                 else
                     camara();
-                break;
-            case SELEC:
+
+            if(requestCode==permisos.PERMISSION_STORAGE_ID.ordinal())
                 if(!aprob)
                     Toast.makeText(this,"Seleccion Desactivada",Toast.LENGTH_LONG).show();
                 else
                 selecPic();
-                break;
 
-        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case CAMARA:
+             if(resultCode==permisos.PERMISSION_CAMERA_ID.ordinal())
                 if(resultCode==RESULT_OK){
                     Bundle extras = data.getExtras();
+                    assert extras != null;
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     img.setImageBitmap(imageBitmap);
                 }
-                break;
-            case SELEC:
-                if(resultCode==RESULT_OK){
+        if(resultCode==permisos.PERMISSION_STORAGE_ID.ordinal())
+            if(resultCode==RESULT_OK){
                     try {
                         final Uri imageUri = data.getData();
+                        assert imageUri != null;
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                         img.setImageBitmap(selectedImage);
@@ -124,13 +119,6 @@ public class CamaraActivity extends AppCompatActivity {
                     }
 
                 }
-                break;
-
         }
-
-
-    }
-
-
 
 }

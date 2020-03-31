@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.IntentSender.SendIntentException;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -112,6 +113,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
                     current=location;
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude())).title("Mi posicion").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
                 }
             }
         };
@@ -140,9 +143,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 if (mMap != null) {
                                     MarkerOptions myMarkerOptions = new MarkerOptions();
                                     myMarkerOptions.position(position);
-                                    myMarkerOptions.title("Dirección Encontrada");
+                                    myMarkerOptions.title(getNombre(position));
                                     myMarkerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                                    mMap.clear();
+                                    if(marker!=null)
+                                        marker.remove();
                                     marker=mMap.addMarker(myMarkerOptions);
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
                                     toastPosicion(position);
@@ -161,8 +165,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-
         LatLng myLoc = new LatLng(4.65, -74.05);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLoc));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
@@ -242,7 +244,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ResolvableApiException resolvable = (ResolvableApiException) e;
                             resolvable.startResolutionForResult(MapsActivity.this,
                                     REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException sendEx) {
+                        } catch (SendIntentException sendEx) {
                         } break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         break;
@@ -263,7 +265,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             "Sin acceso a localización, hardware deshabilitado!",
                             Toast.LENGTH_LONG).show();
                 }
-                return;
+            break;
             }
         }
     }
@@ -290,7 +292,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 ResolvableApiException resolvable = (ResolvableApiException) e;
                                 resolvable.startResolutionForResult(MapsActivity.this,
                                         REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException sendEx) {
+                            } catch (SendIntentException sendEx) {
                             } break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                             break;
@@ -300,13 +302,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else
         {
-            permisos.requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,null,permisos.PERMISSION_LOCATION_ID.ordinal());
+            permisos.requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,"Es necesario para poder mostrarle la distancia",permisos.PERMISSION_LOCATION_ID.ordinal());
         }
 
     }
 
     private void startLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
             mfusedLoc.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         }
 
