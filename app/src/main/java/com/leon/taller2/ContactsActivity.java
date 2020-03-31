@@ -25,7 +25,7 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         lContac=findViewById(R.id.listCont);
-        permisos.requestPermission(this, Manifest.permission.READ_CONTACTS, "Es necesario para mostrar los contactos", permisos.PERMISSION_CONTACTS_ID.ordinal() );
+        requestPermission(this, Manifest.permission.READ_CONTACTS, "Es necesario para mostrar los contactos", permisos.PERMISSION_CONTACTS_ID.ordinal() );
         dbAc= new String[]{ContactsContract.Profile._ID,ContactsContract.Profile.DISPLAY_NAME_PRIMARY};
         adaptador= new ContacAdapter(this,null,0);
         lContac.setAdapter(adaptador);
@@ -41,7 +41,15 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
+    public void requestPermission(Activity context, String permission, String just, int id) {
+        if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permission)) {
+                Toast.makeText(context, just, Toast.LENGTH_LONG).show();
+            }
+            ActivityCompat.requestPermissions(context, new String[]{permission}, id);
 
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
