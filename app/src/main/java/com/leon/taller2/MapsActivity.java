@@ -83,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSensorChanged(SensorEvent event) {
                 if(mMap!=null && luz!=null)
                 {
-                    if(event.values[0]<500)
+                    if(event.values[0]<300)
                         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(MapsActivity.this, R.raw.dark_style_map));
                     else
                         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(MapsActivity.this, R.raw.light_style_map));
